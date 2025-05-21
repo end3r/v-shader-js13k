@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>js13kGames Shader</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #logo {
+      position: absolute;
+      width: 100px;
+      pointer-events: none;
+      transition: transform 0.05s;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="glcanvas"></canvas>
+  <img id="logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iMjk2Ny4wMDAwMDBwdCIgaGVpZ2h0PSIxOTY0LjAwMDAwMHB0IiB2aWV3Qm94PSIwIDAgMjk2Ny4wMDAwMDAgMTk2NC4wMDAwMDAiCiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0Ij4KCjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAuMDAwMDAwLDE5NjQuMDAwMDAwKSBzY2FsZSgwLjEwMDAwMCwtMC4xMDAwMDApIgpmaWxsPSIjMDAwMDAwIiBzdHJva2U9Im5vbmUiPgo8cGF0aCBkPSJNNDI5OSAxOTUyMCBjLTIxNSAtMzYgLTQyMyAtMTQwIC01ODEgLTI4OCAtMTUzIC0xNDQgLTI0OSAtMzEwIC0zMTcKLTU0OCAtMTE1IC00MDMgLTQ2NCAtMTY5NiAtNjY3IC0yNDczIC0xMTEgLTQyNSAtMTEwIC0zOTQgLTYgLTQwNyAzMSAtNCAxNzkKLTQgMzI4IDAgMjkxIDggMzg0IDMgNDE1IC0yMyAxOSAtMTYgMTggLTIyIC02NiAtMzM2IC0zMzkgLTEyNjYgLTYxNyAtMjE4NgotMTQ2MCAtNDgyNSAtODk3IC0yODEwIC0xMjQ4IC0zOTk2IC0xNTg5IC01MzY2IC0yMDcgLTgzMyAtMjQwIC0xMDUxIC0yNDAKLTE1NjkgMCAtNDA1IDI4IC02NDggMTE0IC0xMDAwIDcxIC0yODkgMTY1IC01NDQgMjk1IC04MDAgNDk5IC05ODUgMTM5MgotMTYwMSAyNTM3IC0xNzUxIDE3MCAtMjIgNTQzIC0zMCA3MjAgLTE1IDY0NSA1NSAxMjc3IDI4NyAxODE1IDY2OCAyNTQgMTc5CjU3NSA0ODEgNzY1IDcxOCAyODkgMzYxIDUxMCA3NTUgNjUzIDExNjYgMjAgNTcgNDcwIDE0NzAgMTAwMCAzMTM5IGw5NjMgMzAzNQo0MDcgNDYwNSA0MDYgNDYwNCAtMTQxIDQwMSBjLTE1MCA0MjEgLTE4MSA0OTUgLTI2MiA2MTIgLTY4IDk5IC0yMjUgMjQ3IC0zMjYKMzA3IC0xMDAgNjAgLTIzNyAxMTIgLTM1NyAxMzcgLTg2IDE4IC0xNzggMTkgLTIyMjUgMTggLTExNzQgLTEgLTIxNTYgLTUKLTIxODEgLTl6IG0yNDQzIC0zNTcxIGMxNzUgLTM3IDMyNSAtMTkwIDM1NyAtMzYzIDcgLTM4IDExIC0yMzIgMTEgLTUyMSAwCi0zOTUgMiAtNDY5IDE2IC01MTYgMjQgLTgwIDUwIC0xMjYgMTA3IC0xODcgNjEgLTYzIDExNSAtOTcgMTk4IC0xMjMgNTYgLTE3Cjk4IC0xOSA1MjMgLTE5IDI5MCAwIDQ4NCAtNCA1MjIgLTExIDE3MyAtMzIgMzI2IC0xODIgMzYzIC0zNTcgNyAtMzQgMTEgLTIwMgoxMSAtNDcwIDAgLTM0MyAtMyAtNDI4IC0xNSAtNDc3IC0zNSAtMTM0IC0xMjEgLTIzNyAtMjQ5IC0zMDEgbC04MCAtMzkgLTUyMAotNSBjLTU1NyAtNiAtNTM3IC00IC02NDIgLTU4IC04NyAtNDUgLTE3MSAtMTQxIC0yMTEgLTI0MiAtMTYgLTQwIC0xOCAtMTAyCi0yMyAtNTYwIC03IC01NzkgLTUgLTU2OCAtODMgLTY4MiAtNTQgLTc5IC0xNDUgLTE0OSAtMjMwIC0xNzcgLTYzIC0yMSAtNzYKLTIyIC01MzggLTE5IGwtNDc0IDMgLTY3IDMyIGMtMTE4IDU2IC0yMTEgMTYyIC0yNDkgMjg0IC0xOCA1NiAtMTkgOTggLTE5CjUyOSAwIDMwNCAtNCA0ODggLTExIDUyMiAtMzcgMTc5IC0xNzggMzIwIC0zNTcgMzU3IC0zNCA3IC0yMTggMTEgLTUyMiAxMQotNDMxIDAgLTQ3MyAxIC01MjkgMTkgLTEyMiAzOCAtMjI4IDEzMSAtMjg0IDI0OSBsLTMyIDY3IC0zIDQ2OSBjLTMgNDUwIC0yCjQ3MyAxOCA1MzggMzggMTI1IDE0NSAyMzcgMjc5IDI5MCA1NSAyMiA2NyAyMyA1NzYgMjggNTEyIDUgNTIxIDYgNTc0IDI4IDEzMgo1NiAyMTIgMTQxIDI2OSAyODYgMTQgMzUgMTcgMTE1IDIyIDU2MSBsNSA1MjAgMzcgNzggYzYyIDEyOSAxODggMjMxIDMxOCAyNTYKNjggMTMgODY4IDEzIDkzMiAweiIvPgo8cGF0aCBkPSJNMjA3MzAgMTk1MTAgYy0xNjEgLTM0IC0yOTIgLTkxIC00MjAgLTE4MSAtMTQzIC0xMDEgLTI3NSAtMjU2IC0zNDkKLTQxMyAtNTAgLTEwMyAtMzExIC04NDUgLTMxMSAtODgxIDAgLTE5IDE4MiAtMjA5NiA0MDUgLTQ2MTYgbDQwNiAtNDU4MiA5NzAKLTMwNTQgYzUzMyAtMTY4MCA5ODUgLTMwOTYgMTAwMyAtMzE0NiAyNTEgLTY5MyA3MTkgLTEzMzAgMTMwMiAtMTc3NCA1MTgKLTM5NCAxMTI3IC02NDUgMTc2OSAtNzI4IDE2NCAtMjIgNDMwIC0zMiA0MzkgLTE3IDMzIDU0IC0xNjQgOTU1IC02MzQgMjg5NwotNjc5IDI4MDYgLTgxNiAzMzkzIC05MjQgMzk0MCAtMTExIDU3MCAtNzUgNTg3IDEzMSA2MCAxNzYgLTQ1MiA0MjQgLTExNjEKMTExOCAtMzIwMCAxNzggLTUyMiAzNzMgLTEwOTQgNDMzIC0xMjcwIDQ5MSAtMTQyNyA3NjMgLTIxNTEgODE4IC0yMTcyIDE5IC03CjI2NiA3MiA0MjkgMTM3IDYxMiAyNDUgMTE0MyA2NDcgMTUyNiAxMTU1IDYxNCA4MTUgODUzIDE4NTMgNjYzIDI4ODUgLTUyIDI4NAotMzY3IDE1NzkgLTYwOSAyNTA1IC0xMzUgNTE2IC0zNTAgMTM3MSAtNDYwIDE4MjggbC01OCAyMzggLTU2IDU3IGMtMTIyIDEyMwotMzE3IDI3OCAtOTkxIDc4NyAtNzcyIDU4MiAtMTAzMCA3OTcgLTEwMzAgODU3IDAgNTUgMTM2IDI5NSA1NTIgOTczIDM3NCA2MTEKNDk1IDgyMSA1MTggOTAxIDExIDM3IDcgNjMgLTU0IDMyMCAtMTQwIDU5NSAtMjM3IDEwNDIgLTQ4MiAyMjI0IC0yNzIgMTMxMAotNDAyIDE5MDEgLTU2NCAyNTU1IC05MSAzNjkgLTIwNyA4MDUgLTI1MSA5NTAgLTExNiAzNzYgLTM5NyA2NDkgLTc3NiA3NTMKbC05OCAyNyAtNzMyIDMgYy00NTcgMiAtNzMzIC0xIC03MzMgLTcgMCAtNSAtMjkgLTc0MiAtNjUgLTE2MzggLTM2IC04OTUgLTY0Ci0xNjQwIC02MyAtMTY1NiAzIC0yNSAxMSAtMzAgOTggLTYwIDI4MSAtOTcgNDg4IC0zMTQgNTc2IC02MDIgMjQgLTgwIDI3Ci0xMDYgMjggLTI0MCAxIC0xODAgLTEzIC0yNDMgLTg0IC0zOTAgLTEyMSAtMjUyIC0zMzYgLTQyNiAtNjA3IC00OTIgLTk3IC0yMwotMjk1IC0yMyAtMzk2IDAgLTI3NCA2NSAtNDk1IDI0MyAtNjE2IDQ5OCAtNzAgMTQ1IC05NyAzMDYgLTgxIDQ2NyAxMyAxMjAgMzMKMTkyIDg0IDI5NyA2NSAxMzQgMTQ2IDIzMyAyNzggMzQwIGwzNyAzMCAtMzA5IDE3MjUgYy0xNzAgOTQ5IC0zMTAgMTcyNiAtMzEwCjE3MjggMCAxIC0zMjMgMiAtNzE3IDEgLTY1NiAwIC03MjUgLTIgLTgwMyAtMTl6IG00OTExIC01MjQ2IGMxNzEgLTM5IDMxOAotMTIzIDQ0NiAtMjU3IDM2MiAtMzc3IDMzMSAtOTYzIC03MSAtMTMwNCAtMjM0IC0yMDAgLTU2NiAtMjYzIC04NTkgLTE2NQotMTQxIDQ4IC0yMjkgMTA0IC0zNDcgMjIyIC0xMTggMTE4IC0xNzQgMjA2IC0yMjEgMzQ1IC0xMDkgMzI1IC0yMSA2ODcgMjI4CjkyNiAxNDYgMTQyIDMxMyAyMjEgNTI4IDI1MyA1NiA4IDIyMSAtMyAyOTYgLTIweiBtLTM5ODYgLTE1NCBjMjU3IC02NiA0NjcKLTI0MCA1ODQgLTQ4MyA3MiAtMTQ5IDg2IC0yMTIgODUgLTM5MiAtMSAtMTMzIC00IC0xNjAgLTI3IC0yMzggLTk3IC0zMTcKLTM0MCAtNTUxIC02NTUgLTYyOSAtMTIwIC0zMCAtMzEzIC0zMCAtNDI3IDEgLTE4MCA0NyAtMzU0IDE1OSAtNDc4IDMwNiAtNjYKNzggLTE0OSAyMzggLTE3MiAzMzAgLTU1IDIxNyAtMzMgNDQwIDYyIDYzMCAxMzMgMjY0IDM4MyA0NDkgNjcxIDQ5NSA4OCAxNAoyNjYgNCAzNTcgLTIweiBtMjA4MCAtMTkzMCBjNTA0IC0xMzEgNzk0IC02NjcgNjI2IC0xMTU3IC03OSAtMjI5IC0yNjUgLTQzMwotNDg2IC01MzQgLTE1OSAtNzIgLTM4OSAtOTUgLTU1OCAtNTUgLTMzOCA3OCAtNjAwIDM0MCAtNjgzIDY4MiAtMjUgMTAzIC0yMwoyOTUgNCA0MDYgODUgMzQ3IDM2MCA2MDYgNzE1IDY3NCA5OCAxOSAyNzkgMTEgMzgyIC0xNnoiLz4KPHBhdGggZD0iTTEwMTY1IDE4MDQ4IGMtNSAtMTYgLTIwNiAtMjMzMCAtMjAzIC0yMzMzIDMgLTIgNjcxMCAtNDYgNjk0NiAtNDUKbDEwMiAwIDAgLTk3IGMwIC01NCAtMyAtMTI4IC03IC0xNjUgbC02IC02OCAtMzUzMyAwIGMtMTk0NCAwIC0zNTM0IC0xIC0zNTM1Ci0yIC0yIC04IC0zMDYgLTM0ODMgLTMwNCAtMzQ4NSAxIC0zIDY2MTMgLTQzIDcwNzMgLTQzIGwzNDIgMCAwIC0xNjQgYzAgLTkxCi00IC0xNjcgLTggLTE3MCAtNSAtMyAtMTY4MCAtMTMgLTM3MjMgLTIyIC0yMDQzIC05IC0zNzE2IC0xOCAtMzcxOCAtMjAgLTIKLTIgLTIyOSAtMjU0OSAtMjMxIC0yNTk2IDAgLTUgMjQwMSAtOCA1MzM1IC04IGw1MzM1IDAgMCAzMyBjMCAzMiAtODAzIDkwNDEKLTgxNSA5MTQ1IGwtNiA1MiAtNDUyMCAwIGMtMzYwNyAwIC00NTIwIC0zIC00NTI0IC0xMnogbTM4MTEgLTM1MDQgYzExMCAtMzAKMjIxIC0xMzEgMjc2IC0yNDkgMTkgLTQzIDIzIC02NiAyMyAtMTcwIDAgLTIwNCA0MCAtMTUyIC02NzQgLTg2NyAtNTMwIC01MzAKLTYxNCAtNjEwIC02NjggLTYzNyAtMTcyIC04NSAtMzY1IC01NyAtNTAyIDc0IC0xNTQgMTQ2IC0xODUgMzY3IC03OCA1NDcgMTQKMjQgMjk5IDMxNiA2MzQgNjQ5IDU2OCA1NjYgNjEyIDYwNyA2NzIgNjM0IDEwNiA0NiAyMDEgNTIgMzE3IDE5eiBtMjUyNCAtMQpjMTEwIC0zNyAyMTAgLTEyOCAyNjIgLTIzOSAyNiAtNTUgMzIgLTgyIDM1IC0xNTggNiAtMTA5IC0xNCAtMTgzIC03MCAtMjY3Ci0yMCAtMzAgLTMwMSAtMzE4IC02MjQgLTY0MCAtNjM5IC02MzggLTYzMiAtNjMyIC03NzEgLTY1OSAtMjE1IC00MyAtNDQwIDkyCi01MDMgMzAyIC0zMyAxMDggLTI1IDIyMCAyNSAzMjQgMzcgNzggNDcgODkgNjM5IDY4MCA1NDQgNTQ0IDYwOCA2MDQgNjY3IDYzMwoxMDQgNTAgMjMyIDU5IDM0MCAyNHoiLz4KPC9nPgo8L3N2Zz4K" alt="js13kGames Logo" />
+  <script>
+    const canvas = document.getElementById("glcanvas");
+    const gl = canvas.getContext("webgl");
+    const logo = document.getElementById("logo");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Vertex Shader
+    const vertexShaderSource = `
+      attribute vec2 a_position;
+      varying vec2 v_uv;
+      void main() {
+        v_uv = a_position * 0.5 + 0.5;
+        gl_Position = vec4(a_position, 0.0, 1.0);
+      }
+    `;
+
+    // Fragment Shader
+    const fragmentShaderSource = `
+      precision mediump float;
+      varying vec2 v_uv;
+      uniform float u_time;
+      uniform vec2 u_resolution;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+      }
+
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        vec2 u = f*f*(3.0-2.0*f);
+        return mix(mix(hash(i + vec2(0.0, 0.0)),
+                       hash(i + vec2(1.0, 0.0)), u.x),
+                   mix(hash(i + vec2(0.0, 1.0)),
+                       hash(i + vec2(1.0, 1.0)), u.x), u.y);
+      }
+
+      void main() {
+        vec2 uv = v_uv;
+
+        float n = noise(uv * 8.0 + u_time * 0.3);
+        float wave = sin(uv.y * 15.0 + u_time * 2.0 + n * 3.14);
+
+        // Color stops
+        vec3 c1 = vec3(166.0, 30.0, 43.0) / 255.0;
+        vec3 c2 = vec3(154.0, 32.0, 34.0) / 255.0;
+        vec3 c3 = vec3(149.0, 31.0, 32.0) / 255.0;
+        vec3 c4 = vec3(143.0, 29.0, 31.0) / 255.0;
+
+        float t = 0.5 + 0.5 * wave;
+
+        // Blend across color stops
+        vec3 color = mix(
+                        mix(c1, c2, smoothstep(0.0, 0.33, t)),
+                        mix(c3, c4, smoothstep(0.34, 1.0, t)),
+                        smoothstep(0.3, 0.7, t)
+                      );
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `;
+
+    function createShader(type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    }
+
+    const vertexShader = createShader(gl.VERTEX_SHADER, vertexShaderSource);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    const positions = new Float32Array([
+      -1, -1,  1, -1, -1, 1,
+      -1, 1,   1, -1,  1, 1,
+    ]);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const timeLoc = gl.getUniformLocation(program, "u_time");
+    const resLoc = gl.getUniformLocation(program, "u_resolution");
+
+    let startTime = performance.now();
+
+    function render() {
+      const t = (performance.now() - startTime) / 1000;
+
+      gl.uniform1f(timeLoc, t);
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      // Animate logo: float + wiggle
+      const wiggleX = Math.sin(t * 4.0) * 10;
+      const offsetY = Math.sin(t * 2.5) * 20;
+      const scale = 1 + 0.05 * Math.sin(t * 3.5);
+
+      const logoX = canvas.width / 2 - 50 + wiggleX;
+      const logoY = canvas.height / 2 - 50 + offsetY;
+
+      logo.style.left = `${logoX}px`;
+      logo.style.top = `${logoY}px`;
+      logo.style.transform = `scale(${scale})`;
+
+      requestAnimationFrame(render);
+    }
+
+    render();
+  </script>
+</body>
+</html>
